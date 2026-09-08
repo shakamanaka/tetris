@@ -358,10 +358,7 @@ export class TetrisGame {
 
   private spawnNew(type: PieceType): SpawnResult {
     const piece = spawnPiece(type);
-    // SRS standard spawn: top of bounding box at row 0 (or -2 for O).
-    // Re-center horizontally using the actual piece width.
-    const offset = type === "O" ? 4 : type === "I" ? 3 : 3;
-    piece.x = offset;
+    piece.x = 3;
 
     // Immediate game over if the hidden buffer is already full.
     if (isAboveField(this.stack)) {
@@ -370,7 +367,7 @@ export class TetrisGame {
 
     if (collides(this.stack, piece)) {
       // Try nudging up into the buffer; if that still collides, it's game over.
-      for (let y = piece.y - 1; y >= -4; y--) {
+      for (let y = piece.y - 1; y >= 0; y--) {
         const test = { ...piece, y };
         if (!collides(this.stack, test)) {
           return { piece: test, gameOver: false };

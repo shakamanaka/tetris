@@ -1,4 +1,11 @@
-import { type ActivePiece, type Cell, type PieceType, PIECE_TYPES, type Rotation } from "./types.js";
+import {
+  type ActivePiece,
+  type Cell,
+  type PieceType,
+  PIECE_TYPES,
+  type Rotation,
+  HIDDEN_ROWS,
+} from "./types.js";
 
 /**
  * Per-piece color palette. Inspired by the classic Tetris guideline colors.
@@ -196,12 +203,12 @@ export function pieceCells(piece: ActivePiece): Cell[] {
 
 /** Build a fresh piece at the spawn location. */
 export function spawnPiece(type: PieceType): ActivePiece {
-  // Standard SRS spawn: pieces enter at columns 3-6 with rows 0-3 visible.
+  // Standard SRS spawn: pieces enter at columns 3-6 at the top of the visible playfield.
   return {
     type,
     rotation: 0,
     x: 3,
-    y: type === "O" ? -2 : 0,
+    y: type === "I" ? HIDDEN_ROWS - 1 : HIDDEN_ROWS,
   };
 }
 

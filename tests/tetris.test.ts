@@ -283,7 +283,8 @@ describe("Spawn and cell helpers", () => {
     for (const t of ["I", "O", "T", "S", "Z", "J", "L"] as const) {
       const p = spawnPiece(t);
       expect(p.x).toBeGreaterThanOrEqual(3);
-      expect(p.y).toBeLessThan(2);
+      expect(p.y).toBeLessThanOrEqual(HIDDEN_ROWS);
+      expect(p.y).toBeGreaterThanOrEqual(HIDDEN_ROWS - 1);
     }
   });
 
