@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tetrix</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
+      rel="stylesheet"
+      onerror="
+        this.onerror = null;
+        this.parentNode.removeChild(this);
+      "
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app" id="app">
+      <div class="board-wrap">
+        <canvas id="board" aria-label="Game board"></canvas>
+        <aside class="sidebar">
+          <section class="panel" id="panel-stats">
+            <h2>STATS</h2>
+            <div class="stats" id="stats"></div>
+          </section>
+          <section class="panel" id="panel-next">
+            <h2>NEXT</h2>
+            <div class="next-line" id="next-label">—</div>
+            <canvas id="preview" aria-label="Next pieces"></canvas>
+          </section>
+          <section class="panel" id="panel-controls">
+            <h2>CONTROLS</h2>
+            <div class="controls-list" id="controls-list"></div>
+          </section>
+        </aside>
+      </div>
+
+      <div class="overlay visible" id="screen-menu">
+        <div class="overlay-card">
+          <h1 class="title">TETRIX</h1>
+          <p class="subtitle">A classic block-stacking arcade game</p>
+          <div class="menu-buttons">
+            <button id="btn-play" class="btn primary">PLAY</button>
+            <button id="btn-settings" class="btn">SETTINGS</button>
+            <button id="btn-quit" class="btn">QUIT</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="overlay" id="screen-settings">
+        <div class="overlay-card">
+          <h1 class="title small">SETTINGS</h1>
+          <div class="settings-grid">
+            <label class="toggle">
+              <input type="checkbox" id="toggle-music" checked />
+              <span>Music</span>
+            </label>
+            <label class="toggle">
+              <input type="checkbox" id="toggle-sfx" checked />
+              <span>Sound Effects</span>
+            </label>
+            <label class="slider">
+              <span>Music Volume</span>
+              <input type="range" id="volume-music" min="0" max="100" value="35" />
+            </label>
+            <label class="slider">
+              <span>SFX Volume</span>
+              <input type="range" id="volume-sfx" min="0" max="100" value="60" />
+            </label>
+          </div>
+          <button id="btn-settings-back" class="btn">BACK</button>
+        </div>
+      </div>
+
+      <div class="overlay translucent" id="screen-pause">
+        <div class="overlay-card small">
+          <h1 class="title small">PAUSED</h1>
+          <p class="subtitle">Press ESC or P to resume</p>
+        </div>
+      </div>
+
+      <div class="overlay" id="screen-gameover">
+        <div class="overlay-card">
+          <h1 class="title small danger">GAME OVER</h1>
+          <div class="final-stats">
+            <div><span>SCORE</span><strong id="final-score">0</strong></div>
+            <div><span>HIGH SCORE</span><strong id="final-high">0</strong></div>
+            <div><span>LEVEL</span><strong id="final-level">1</strong></div>
+            <div><span>LINES</span><strong id="final-lines">0</strong></div>
+          </div>
+          <div class="menu-buttons">
+            <button id="btn-play-again" class="btn primary">PLAY AGAIN</button>
+            <button id="btn-main-menu" class="btn">MAIN MENU</button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>
