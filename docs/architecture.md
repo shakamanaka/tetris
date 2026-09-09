@@ -1,6 +1,6 @@
 # Architecture
 
-Tetrix uses a small layered design. The rules are kept independent from the
+Tetris uses a small layered design. The rules are kept independent from the
 desktop shell so they can be tested without a native window.
 
 ```text

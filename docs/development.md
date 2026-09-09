@@ -29,8 +29,8 @@ cargo check --manifest-path src-tauri/Cargo.toml
 
 ## Persistence
 
-Settings use `tetrix.settings.v1` and the local leaderboard uses
-`tetrix.leaderboard.v1`. Both are local to the browser or Tauri WebView
+Settings use `tetris.settings.v1` and the local leaderboard uses
+`tetris.leaderboard.v1`. Both are local to the browser or Tauri WebView
 profile. The leaderboard stores at most ten entries and normalizes nicknames
 to twelve characters.
 

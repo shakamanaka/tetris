@@ -1,6 +1,6 @@
-# Contributing to Tetrix
+# Contributing to Tetris
 
-Thanks for helping improve Tetrix. Small, focused pull requests are easiest to
+Thanks for helping improve Tetris. Small, focused pull requests are easiest to
 review and keep the game stable across desktop platforms.
 
 ## Setup

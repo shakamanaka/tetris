@@ -11,7 +11,7 @@ describe("settings persistence", () => {
 
   it("falls back safely when persisted settings have invalid values", () => {
     window.localStorage.setItem(
-      "tetrix.settings.v1",
+      "tetris.settings.v1",
       JSON.stringify({
         highScore: -100,
         nickname: "   PLAYER   ",

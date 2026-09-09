@@ -201,7 +201,7 @@ function boot(): void {
   }
 
   // Expose the running components for local debugging and manual smoke tests.
-  Object.assign(window as unknown as { tetrix?: object }, { tetrix: { game, sfx, music, input } });
+  Object.assign(window as unknown as { tetris?: object }, { tetris: { game, sfx, music, input } });
 }
 
 function mustFind<T extends HTMLElement = HTMLElement>(selector: string): T {

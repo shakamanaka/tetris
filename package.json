@@ -1,11 +1,11 @@
 {
-  "name": "tetrix",
+  "name": "tetris",
   "private": true,
   "version": "1.0.0",
-  "author": "Tetrix Contributors",
+  "author": "Tetris Contributors",
   "license": "MIT",
   "type": "module",
-  "description": "Classic block-stacking desktop game built with Tauri + TypeScript",
+  "description": "Unofficial Tetris-inspired block-stacking desktop game built with Tauri + TypeScript",
   "keywords": [
     "tetris",
     "tauri",

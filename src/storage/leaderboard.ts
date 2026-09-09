@@ -26,7 +26,7 @@ export const LEADERBOARD_LIMIT = 10;
 export const MAX_NICKNAME_LENGTH = 12;
 export const DEFAULT_NICKNAME = "PLAYER";
 
-const STORAGE_KEY = "tetrix.leaderboard.v1";
+const STORAGE_KEY = "tetris.leaderboard.v1";
 
 /** Returns a compact, display-safe nickname for storage and the UI. */
 export function normalizeNickname(value: string): string {

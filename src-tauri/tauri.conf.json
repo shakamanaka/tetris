@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "Tetrix",
+  "productName": "Tetris",
   "version": "1.0.0",
-  "identifier": "dev.tetrix.game",
+  "identifier": "dev.tetris.game",
   "build": {
     "beforeDevCommand": "npm run dev",
     "beforeBuildCommand": "npm run build",
@@ -13,7 +13,7 @@
     "windows": [
       {
         "label": "main",
-        "title": "Tetrix",
+        "title": "Tetris",
         "width": 900,
         "height": 720,
         "minWidth": 480,
@@ -33,9 +33,9 @@
   "bundle": {
     "active": true,
     "category": "Game",
-    "shortDescription": "Classic block-stacking arcade game",
-    "longDescription": "Tetrix is a classic block-stacking arcade game built with Tauri and TypeScript.",
-    "copyright": "Copyright (c) 2026 Tetrix Contributors",
+    "shortDescription": "Unofficial Tetris-inspired arcade game",
+    "longDescription": "Tetris is an unofficial clone inspired by the original game. It is not affiliated with or endorsed by its rights holders.",
+    "copyright": "Copyright (c) 2026 Tetris Contributors",
     "licenseFile": "../LICENSE",
     "targets": "all",
     "icon": [

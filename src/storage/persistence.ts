@@ -27,7 +27,7 @@ export const DEFAULT_SETTINGS: Settings = {
   sfxVolume: 0.6,
 };
 
-const STORAGE_KEY = "tetrix.settings.v1";
+const STORAGE_KEY = "tetris.settings.v1";
 
 export function loadSettings(): Settings {
   const parsed = readJson<unknown>(STORAGE_KEY, null);

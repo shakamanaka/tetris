@@ -1,6 +1,6 @@
 # Code of Conduct
 
-Tetrix is committed to a welcoming, respectful, and harassment-free community.
+Tetris is committed to a welcoming, respectful, and harassment-free community.
 Participants are expected to communicate constructively, accept good-faith
 feedback, and focus on the work rather than on people.
 

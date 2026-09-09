@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to Tetrix are documented here.
+All notable changes to Tetris are documented here.
 
 ## [Unreleased]
 

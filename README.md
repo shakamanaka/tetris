@@ -1,10 +1,14 @@
-# Tetrix
+# Tetris
 
 A polished, classic block-stacking desktop arcade game built with **Tauri** and
-**TypeScript**. Tetrix runs as a native application on Windows, macOS, and
+**TypeScript**. Tetris runs as a native application on Windows, macOS, and
 Linux without any external browser, plays fully offline once installed, and
 ships with a procedurally synthesised sound-effect bank and a looped chiptune
 soundtrack.
+
+> **Unofficial fan project:** This repository is a simple independent copy
+> inspired by the original Tetris game. It is not affiliated with, endorsed by,
+> or licensed by the rights holders of the original game.
 
 The rules and runtime boundaries are documented in
 [`docs/architecture.md`](docs/architecture.md). Contributor and release
@@ -231,5 +235,5 @@ secrets; see [`docs/development.md`](docs/development.md).
 
 ## License
 
-The Tetrix source code is released under the MIT License. See [`LICENSE`](./LICENSE)
+The Tetris source code is released under the MIT License. See [`LICENSE`](./LICENSE)
 for the full text.

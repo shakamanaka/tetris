@@ -1,6 +1,6 @@
 # Third-Party Licenses
 
-Tetrix bundles the following third-party assets. Each asset is used in
+Tetris bundles the following third-party assets. Each asset is used in
 compliance with the license terms described below.
 
 ## Background music
@@ -22,7 +22,7 @@ here as good practice.
 
 ## Software libraries
 
-The Tetrix application itself relies on the following open-source
+The Tetris application itself relies on the following open-source
 dependencies; their licenses are not bundled but can be reviewed in each
 project's repository:
 

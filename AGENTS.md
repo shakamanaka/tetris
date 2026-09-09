@@ -1,8 +1,8 @@
-# Tetrix agent guide
+# Tetris agent guide
 
 ## Project intent
 
-Tetrix is a small offline desktop game built with Tauri, TypeScript, Vite, and
+Tetris is a small offline desktop game built with Tauri, TypeScript, Vite, and
 Canvas. Keep the game rules deterministic and keep browser or Tauri APIs at the
 application boundary.
 
