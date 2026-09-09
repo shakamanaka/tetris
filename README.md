@@ -84,7 +84,7 @@ minimum of 50 ms per row.
 
 The deliberate choice of vanilla TypeScript keeps the dependency surface tiny
 and the frontend bundle small. The production build reports its current bundle
-size during `npm run build`; native installer sizes vary by operating system.
+size during `pnpm run build`; native installer sizes vary by operating system.
 
 ## Project structure
 
@@ -137,8 +137,8 @@ size during `npm run build`; native installer sizes vary by operating system.
 
 ## Requirements
 
-- Node.js 20+ (the project has been validated against Node 26).
-- npm 10+ (or pnpm / yarn — substitute the commands below accordingly).
+- Node.js 24+.
+- pnpm 11+ (the required version is pinned in `package.json`).
 - Rust 1.77+ with the standard Tauri prerequisites for your platform. On
   macOS this means Xcode command-line tools; on Linux the WebKitGTK
   development packages; on Windows the WebView2 runtime plus the MSVC
@@ -149,7 +149,7 @@ size during `npm run build`; native installer sizes vary by operating system.
 ## Installation
 
 ```sh
-npm install
+pnpm install
 ```
 
 This installs the JavaScript dependencies. Rust dependencies are resolved by
@@ -158,7 +158,7 @@ Cargo when you run a Tauri development or build command.
 ## Development
 
 ```sh
-npm run tauri:dev
+pnpm run tauri:dev
 ```
 
 This launches Vite on <http://localhost:5173> and Tauri in development mode,
@@ -170,13 +170,13 @@ If you only want to run the frontend in a regular browser for quick iteration
 Web Audio autoplay policy), use:
 
 ```sh
-npm run dev
+pnpm run dev
 ```
 
 ## Build
 
 ```sh
-npm run tauri:build
+pnpm run tauri:build
 ```
 
 This runs the production Vite build, compiles the Rust binary in release
@@ -192,14 +192,14 @@ mode, and produces platform-native installers and binaries inside
 For a quicker Rust-only verification build, run:
 
 ```sh
-npx tauri build --no-bundle
+pnpm exec tauri build --no-bundle
 ```
 
 ## Tests
 
 ```sh
-npm test            # single run
-npm run test:watch  # watch mode
+pnpm test            # single run
+pnpm run test:watch  # watch mode
 ```
 
 The unit tests cover collisions (walls, floor, piece-on-piece), hard and soft
@@ -210,10 +210,10 @@ the pause / resume state machine, and game-over detection.
 ## Lint, format, type-check
 
 ```sh
-npm run lint        # ESLint
-npm run format      # Prettier (write)
-npm run format:check # Prettier validation
-npm run typecheck   # tsc --noEmit
+pnpm run lint        # ESLint
+pnpm run format      # Prettier (write)
+pnpm run format:check # Prettier validation
+pnpm run typecheck   # tsc --noEmit
 ```
 
 ## Music and credits

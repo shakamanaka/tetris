@@ -3,26 +3,26 @@
 ## Frontend
 
 ```sh
-npm ci
-npm run dev
+pnpm install --frozen-lockfile
+pnpm run dev
 ```
 
 The browser development server is useful for gameplay changes. Native behavior
 and packaging should be checked with:
 
 ```sh
-npm run tauri:dev
-npm run tauri:build
+pnpm run tauri:dev
+pnpm run tauri:build
 ```
 
 ## Validation
 
 ```sh
-npm run format:check
-npm run typecheck
-npm test
-npm run lint
-npm run build
+pnpm run format:check
+pnpm run typecheck
+pnpm test
+pnpm run lint
+pnpm run build
 cargo fmt --manifest-path src-tauri/Cargo.toml --all -- --check
 cargo check --manifest-path src-tauri/Cargo.toml
 ```

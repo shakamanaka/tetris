@@ -5,26 +5,26 @@ review and keep the game stable across desktop platforms.
 
 ## Setup
 
-Requirements are Node.js 20 or newer, npm 10 or newer, and Rust 1.77 or newer
+Requirements are Node.js 24 or newer, pnpm 11 or newer, and Rust 1.77 or newer
 with the Tauri prerequisites for your operating system.
 
 ```sh
-npm ci
-npm run dev
+pnpm install --frozen-lockfile
+pnpm run dev
 ```
 
-Use `npm run tauri:dev` when native window behavior needs to be tested.
+Use `pnpm run tauri:dev` when native window behavior needs to be tested.
 
 ## Before opening a pull request
 
 Run the full local checks:
 
 ```sh
-npm run format:check
-npm run typecheck
-npm test
-npm run lint
-npm run build
+pnpm run format:check
+pnpm run typecheck
+pnpm test
+pnpm run lint
+pnpm run build
 cargo fmt --manifest-path src-tauri/Cargo.toml --all -- --check
 cargo check --manifest-path src-tauri/Cargo.toml
 ```

@@ -27,18 +27,18 @@ The boundary relationships and runtime flow are documented in
 Run these commands before opening a pull request:
 
 ```sh
-npm ci
-npm run format:check
-npm run typecheck
-npm test
-npm run lint
-npm run build
+pnpm install --frozen-lockfile
+pnpm run format:check
+pnpm run typecheck
+pnpm test
+pnpm run lint
+pnpm run build
 cargo fmt --manifest-path src-tauri/Cargo.toml --all -- --check
 cargo check --manifest-path src-tauri/Cargo.toml
 ```
 
-Use `npm run tauri:dev` for a native development session and
-`npm run tauri:build` to validate packaging on a supported operating system.
+Use `pnpm run tauri:dev` for a native development session and
+`pnpm run tauri:build` to validate packaging on a supported operating system.
 
 ## Working rules
 
