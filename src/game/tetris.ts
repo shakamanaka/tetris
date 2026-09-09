@@ -1,6 +1,6 @@
 import { HIDDEN_ROWS } from "./types.js";
 import { spawnPiece, kickOffsets, pieceCells } from "./pieces.js";
-import { collides, ghostY, hardDrop, mergePiece, clearLines, isAboveField } from "./board.js";
+import { collides, ghostY, mergePiece, clearLines, isAboveField } from "./board.js";
 import {
   applyLockReward,
   gravityMs,
@@ -35,8 +35,8 @@ export interface TimingSettings {
 }
 
 export const DEFAULT_TIMING: TimingSettings = {
-  dasMs: 133,
-  arrMs: 33,
+  dasMs: 170,
+  arrMs: 55,
   softDropMs: 50,
   lockDelayMs: LOCK_DELAY_MS,
 };
@@ -78,6 +78,7 @@ export class TetrisGame {
   private lockTimer = 0;
   private lockMoves = 0;
   private initialised = false;
+  private initialSeed?: number | (() => number);
 
   constructor(
     options: {
@@ -88,7 +89,10 @@ export class TetrisGame {
     } = {},
   ) {
     if (options.highScore !== undefined) this.highScore = options.highScore;
-    if (options.seed !== undefined) this.bag = new SevenBag(options.seed);
+    if (options.seed !== undefined) {
+      this.initialSeed = options.seed;
+      this.bag = new SevenBag(options.seed);
+    }
     if (options.initialStack) this.stack = options.initialStack.map((row) => row.slice());
     this.timing = { ...DEFAULT_TIMING, ...(options.timing ?? {}) };
   }
@@ -110,8 +114,8 @@ export class TetrisGame {
   snapshot(): GameSnapshot {
     return {
       state: this.state,
-      stack: this.stack,
-      piece: this.piece,
+      stack: this.stack.map((row) => row.slice()),
+      piece: this.piece ? { ...this.piece } : null,
       ghostY: this.piece ? ghostY(this.stack, this.piece) : 0,
       next: this.next.slice(),
       stats: {
@@ -142,6 +146,7 @@ export class TetrisGame {
     if (this.initialised) {
       this.stack = emptyStack();
     }
+    const seed = this.initialised ? undefined : this.initialSeed;
     this.initialised = true;
     this.score = 0;
     this.level = 1;
@@ -149,7 +154,7 @@ export class TetrisGame {
     this.lockTimer = 0;
     this.lockMoves = 0;
     this.lastEvents = [];
-    this.bag = new SevenBag();
+    this.bag = new SevenBag(seed);
     this.next = this.bag.preview(PREVIEW_COUNT);
     const first = this.bag.next();
     this.next = this.bag.preview(PREVIEW_COUNT);
@@ -217,10 +222,10 @@ export class TetrisGame {
   /** Hard drop: instantly lock the piece, award points. */
   hardDrop(): boolean {
     if (this.state !== "PLAYING" || !this.piece) return false;
-    const result = hardDrop(this.stack, this.piece);
-    this.stack = result.stack;
-    this.score += result.distance * HARD_DROP_POINTS;
-    this.lastEvents.push({ kind: "hardDrop", distance: result.distance });
+    const distance = ghostY(this.stack, this.piece) - this.piece.y;
+    this.piece = { ...this.piece, y: this.piece.y + distance };
+    this.score += distance * HARD_DROP_POINTS;
+    this.lastEvents.push({ kind: "hardDrop", distance });
     this.afterLock();
     return true;
   }

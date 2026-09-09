@@ -2,8 +2,16 @@
   "name": "tetrix",
   "private": true,
   "version": "1.0.0",
+  "author": "Tetrix Contributors",
+  "license": "MIT",
   "type": "module",
   "description": "Classic block-stacking desktop game built with Tauri + TypeScript",
+  "keywords": [
+    "tetris",
+    "tauri",
+    "typescript",
+    "desktop-game"
+  ],
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
@@ -14,12 +22,16 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "lint": "eslint . --ext .ts",
-    "format": "prettier --write \"src/**/*.{ts,css,html}\" \"tests/**/*.ts\"",
+    "format": "prettier --write \"src/**/*.{ts,css,html}\" \"tests/**/*.ts\" \"*.{md,json,yml,yaml,js,ts}\" \"docs/**/*.md\" \".github/**/*.{md,yml,yaml}\" \"src-tauri/**/*.json\"",
+    "format:check": "prettier --check \"src/**/*.{ts,css,html}\" \"tests/**/*.ts\" \"*.{md,json,yml,yaml,js,ts}\" \"docs/**/*.md\" \".github/**/*.{md,yml,yaml}\" \"src-tauri/**/*.json\"",
     "typecheck": "tsc --noEmit"
   },
+  "engines": {
+    "node": ">=20",
+    "npm": ">=10"
+  },
   "dependencies": {
-    "@tauri-apps/api": "^2.0.0",
-    "@tauri-apps/plugin-store": "^2.0.0"
+    "@tauri-apps/api": "^2.0.0"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^2.0.0",

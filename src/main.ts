@@ -1,12 +1,14 @@
 import { TetrisGame } from "./game/tetris.js";
 import { startGameLoop } from "./game/loop.js";
-import { InputManager } from "./game/input.js";
+import { InputManager } from "./input/input-manager.js";
 import { SfxEngine } from "./audio/sfx.js";
 import { MusicPlayer } from "./audio/music.js";
-import { renderGame, renderPreview, BOARD_PADDING } from "./render/renderer.js";
+import { renderGame, renderPreview } from "./render/renderer.js";
 import { ScreenController } from "./ui/screens.js";
-import { DEFAULT_SETTINGS, loadSettings, saveSettings } from "./storage/persistence.js";
+import { createLayoutController } from "./ui/layout.js";
+import { loadSettings, saveSettings } from "./storage/persistence.js";
 import type { Settings } from "./storage/persistence.js";
+import { loadLeaderboard, recordScore } from "./storage/leaderboard.js";
 import musicUrl from "./assets/music.ogg";
 
 import "./styles.css";
@@ -21,6 +23,9 @@ function boot(): void {
   const game = new TetrisGame({ highScore: initialSettings.highScore });
   const sfx = new SfxEngine();
   const music = new MusicPlayer(musicUrl);
+  let nickname = initialSettings.nickname;
+  let scoreSavedForGame = false;
+  let lastRenderedState = game.getState();
 
   sfx.setVolume(initialSettings.sfxVolume);
   sfx.setMuted(!initialSettings.sfxEnabled);
@@ -35,85 +40,15 @@ function boot(): void {
   const boardCtx: CanvasRenderingContext2D = rawBoardCtx;
   const previewCtx: CanvasRenderingContext2D = rawPreviewCtx;
 
-  // Configure canvas resolution to match its CSS pixel size at devicePixelRatio.
-  function resizeCanvas(
-    canvas: HTMLCanvasElement,
-    ctx: CanvasRenderingContext2D,
-    cssWidth: number,
-    cssHeight: number,
-  ): void {
-    const dpr = window.devicePixelRatio || 1;
-    canvas.width = Math.floor(cssWidth * dpr);
-    canvas.height = Math.floor(cssHeight * dpr);
-    canvas.style.width = `${cssWidth}px`;
-    canvas.style.height = `${cssHeight}px`;
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  }
-
-  function updateLayout(): void {
-    const vh = window.innerHeight;
-    const vw = window.innerWidth;
-
-    const padY = Math.max(8, Math.min(24, Math.floor(vh * 0.03)));
-    const padX = Math.max(8, Math.min(24, Math.floor(vw * 0.03)));
-    const gap = Math.max(10, Math.min(24, Math.floor(vw * 0.02)));
-
-    const availH = vh - padY * 2;
-    const availW = vw - padX * 2;
-
-    const isNarrow = vw < 540;
-
-    let boardWidth: number;
-    let boardHeight: number;
-    let sidebarWidth: number;
-
-    if (isNarrow) {
-      sidebarWidth = Math.min(availW, 360);
-      const availBoardH = Math.max(200, availH - 220 - gap);
-      const maxCellH = Math.floor((availBoardH - BOARD_PADDING * 2) / 20);
-      const maxCellW = Math.floor((availW - BOARD_PADDING * 2) / 10);
-      const cellSize = Math.max(10, Math.min(maxCellH, maxCellW, 32));
-      boardWidth = 10 * cellSize + BOARD_PADDING * 2;
-      boardHeight = 20 * cellSize + BOARD_PADDING * 2;
-    } else {
-      sidebarWidth = Math.max(170, Math.min(230, Math.floor(availW * 0.28)));
-      const availBoardW = availW - sidebarWidth - gap;
-
-      const maxCellH = Math.floor((availH - BOARD_PADDING * 2) / 20);
-      const maxCellW = Math.floor((availBoardW - BOARD_PADDING * 2) / 10);
-      const cellSize = Math.max(12, Math.min(maxCellH, maxCellW, 36));
-
-      boardWidth = 10 * cellSize + BOARD_PADDING * 2;
-      boardHeight = 20 * cellSize + BOARD_PADDING * 2;
-    }
-
-    const previewWidth = Math.max(80, Math.min(160, sidebarWidth - 28));
-    const previewHeight = Math.max(80, Math.min(140, Math.floor(boardHeight * 0.24)));
-
-    resizeCanvas(boardCanvas, boardCtx, boardWidth, boardHeight);
-    resizeCanvas(previewCanvas, previewCtx, previewWidth, previewHeight);
-
-    const sidebarEl = document.querySelector<HTMLElement>(".sidebar");
-    if (sidebarEl) {
-      sidebarEl.style.width = isNarrow ? "100%" : `${sidebarWidth}px`;
-      sidebarEl.style.maxHeight = isNarrow ? "none" : `${boardHeight}px`;
-    }
-
-    const snap = game.snapshot();
-    renderGame(boardCtx, snap);
-    renderPreview(previewCtx, snap.next);
-  }
-
-  window.addEventListener("resize", updateLayout);
-  window.addEventListener("orientationchange", updateLayout);
-  updateLayout();
+  const layout = createLayoutController(game, boardCanvas, boardCtx, previewCanvas, previewCtx);
 
   const screens = new ScreenController(game, {
     onPlay: () => {
       sfx.ensure();
+      scoreSavedForGame = false;
       game.start();
       screens.showPlaying();
-      updateLayout();
+      layout.update();
       if (music.isEnabled()) music.play();
     },
     onSettings: () => screens.showSettings(),
@@ -122,10 +57,11 @@ function boot(): void {
     },
     onPlayAgain: () => {
       sfx.ensure();
+      scoreSavedForGame = false;
       game.start();
       screens.hideGameOver();
       screens.showPlaying();
-      updateLayout();
+      layout.update();
       if (music.isEnabled()) music.play();
     },
     onMainMenu: () => {
@@ -133,9 +69,25 @@ function boot(): void {
       screens.hideGameOver();
       screens.showMenu();
     },
+    onSaveScore: (requestedNickname) => {
+      if (scoreSavedForGame || game.getState() !== "GAME_OVER") return;
+      const stats = game.getStats();
+      const entry = recordScore({
+        nickname: requestedNickname,
+        score: stats.score,
+        level: stats.level,
+        lines: stats.lines,
+      });
+      nickname = entry.nickname;
+      scoreSavedForGame = true;
+      persist({ ...loadSettings(), nickname: entry.nickname });
+      screens.markScoreSaved(entry.nickname);
+      screens.renderLeaderboard(loadLeaderboard());
+    },
   });
 
   screens.showMenu();
+  screens.renderLeaderboard(loadLeaderboard());
   screens.bindSettings(
     {
       musicEnabled: initialSettings.musicEnabled,
@@ -149,7 +101,7 @@ function boot(): void {
       sfx.setMuted(!next.sfxEnabled);
       sfx.setVolume(next.sfxVolume);
       persist({
-        ...initialSettings,
+        ...loadSettings(),
         musicEnabled: next.musicEnabled,
         sfxEnabled: next.sfxEnabled,
         musicVolume: next.musicVolume,
@@ -163,11 +115,13 @@ function boot(): void {
 
   // Save high score when the window unloads.
   window.addEventListener("beforeunload", () => {
+    layout.dispose();
     persist({ ...loadSettings(), highScore: game.getHighScore() });
   });
 
   startGameLoop(
     (dt) => {
+      input.tick(dt);
       game.tick(dt);
     },
     () => {
@@ -203,7 +157,6 @@ function boot(): void {
           case "gameOver":
             sfx.play("gameOver");
             music.fadeOut(1200);
-            screens.showGameOver();
             break;
         }
       }
@@ -212,7 +165,15 @@ function boot(): void {
         screens.showPaused();
       } else if (snap.state === "PLAYING") {
         screens.hidePaused();
+        if (lastRenderedState === "MENU" || lastRenderedState === "GAME_OVER") {
+          scoreSavedForGame = false;
+          screens.showPlaying();
+        }
+      } else if (snap.state === "GAME_OVER" && lastRenderedState !== "GAME_OVER") {
+        screens.showGameOver(loadLeaderboard(), nickname);
       }
+
+      lastRenderedState = snap.state;
 
       persistHighScore(game.getHighScore());
     },
@@ -239,21 +200,8 @@ function boot(): void {
     saveSettings({ ...s, highScore: Math.max(s.highScore, game.getHighScore()) });
   }
 
-  // Ensure default settings are written on first launch.
-  if (!localStorageAvailable()) {
-    saveSettings(DEFAULT_SETTINGS);
-  }
-
-  // Expose for debug / tests if needed.
+  // Expose the running components for local debugging and manual smoke tests.
   Object.assign(window as unknown as { tetrix?: object }, { tetrix: { game, sfx, music, input } });
-}
-
-function localStorageAvailable(): boolean {
-  try {
-    return typeof window !== "undefined" && !!window.localStorage;
-  } catch {
-    return false;
-  }
 }
 
 function mustFind<T extends HTMLElement = HTMLElement>(selector: string): T {

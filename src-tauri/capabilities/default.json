@@ -3,8 +3,5 @@
   "identifier": "default",
   "description": "Capability for the main window of Tetrix.",
   "windows": ["main"],
-  "permissions": [
-    "core:default",
-    "store:default"
-  ]
+  "permissions": ["core:default"]
 }

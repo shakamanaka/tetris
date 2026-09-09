@@ -1,5 +1,6 @@
 import { TetrisGame } from "../game/tetris.js";
-import { DEFAULT_BINDINGS } from "../game/input.js";
+import { DEFAULT_BINDINGS } from "../input/input-manager.js";
+import type { LeaderboardEntry } from "../storage/leaderboard.js";
 
 export interface ScreenOptions {
   onPlay: () => void;
@@ -7,6 +8,7 @@ export interface ScreenOptions {
   onQuit: () => void;
   onPlayAgain: () => void;
   onMainMenu: () => void;
+  onSaveScore: (nickname: string) => void;
 }
 
 /**
@@ -27,6 +29,11 @@ export class ScreenController {
   private finalHigh: HTMLElement;
   private finalLevel: HTMLElement;
   private finalLines: HTMLElement;
+  private menuLeaderboard: HTMLElement;
+  private gameoverLeaderboard: HTMLElement;
+  private nicknameInput: HTMLInputElement;
+  private saveScoreButton: HTMLButtonElement;
+  private scoreSaveStatus: HTMLElement;
   private musicToggle: HTMLInputElement;
   private sfxToggle: HTMLInputElement;
   private musicVolume: HTMLInputElement;
@@ -45,6 +52,11 @@ export class ScreenController {
     this.finalHigh = mustFind("#final-high");
     this.finalLevel = mustFind("#final-level");
     this.finalLines = mustFind("#final-lines");
+    this.menuLeaderboard = mustFind("#menu-leaderboard");
+    this.gameoverLeaderboard = mustFind("#gameover-leaderboard");
+    this.nicknameInput = mustFind<HTMLInputElement>("#nickname-input");
+    this.saveScoreButton = mustFind<HTMLButtonElement>("#btn-save-score");
+    this.scoreSaveStatus = mustFind("#score-save-status");
     this.musicToggle = mustFind<HTMLInputElement>("#toggle-music");
     this.sfxToggle = mustFind<HTMLInputElement>("#toggle-sfx");
     this.musicVolume = mustFind<HTMLInputElement>("#volume-music");
@@ -56,6 +68,7 @@ export class ScreenController {
     wireButton("#btn-settings-back", opts.onMainMenu);
     wireButton("#btn-play-again", opts.onPlayAgain);
     wireButton("#btn-main-menu", opts.onMainMenu);
+    this.saveScoreButton.addEventListener("click", () => opts.onSaveScore(this.nicknameInput.value));
 
     this.renderControlsList();
   }
@@ -118,17 +131,39 @@ export class ScreenController {
     setVisible(this.pauseOverlay, false);
   }
 
-  showGameOver(): void {
+  showGameOver(entries: ReadonlyArray<LeaderboardEntry>, nickname: string): void {
     const stats = this.game.getStats();
     this.finalScore.textContent = stats.score.toLocaleString("en-US");
     this.finalHigh.textContent = stats.highScore.toLocaleString("en-US");
     this.finalLevel.textContent = stats.level.toString();
     this.finalLines.textContent = stats.lines.toString();
+    this.nicknameInput.value = nickname;
+    this.resetScoreEntry();
+    this.renderLeaderboard(entries);
     setVisible(this.gameOver, true);
   }
 
   hideGameOver(): void {
     setVisible(this.gameOver, false);
+  }
+
+  /** Refreshes both leaderboard views from the latest local records. */
+  renderLeaderboard(entries: ReadonlyArray<LeaderboardEntry>): void {
+    renderLeaderboardInto(this.menuLeaderboard, entries);
+    renderLeaderboardInto(this.gameoverLeaderboard, entries);
+  }
+
+  markScoreSaved(nickname: string): void {
+    this.nicknameInput.value = nickname;
+    this.nicknameInput.disabled = true;
+    this.saveScoreButton.disabled = true;
+    this.scoreSaveStatus.textContent = "SCORE SAVED";
+  }
+
+  private resetScoreEntry(): void {
+    this.nicknameInput.disabled = false;
+    this.saveScoreButton.disabled = false;
+    this.scoreSaveStatus.textContent = "";
   }
 
   /** Refresh the stats / next piece sidebar from the current snapshot. */
@@ -222,6 +257,50 @@ function makeStatRow(label: string, value: string): HTMLElement {
 
 function formatNumber(n: number): string {
   return n.toLocaleString("en-US");
+}
+
+function renderLeaderboardInto(container: HTMLElement, entries: ReadonlyArray<LeaderboardEntry>): void {
+  container.innerHTML = "";
+  if (entries.length === 0) {
+    const empty = document.createElement("p");
+    empty.className = "leaderboard-empty";
+    empty.textContent = "NO SCORES YET";
+    container.appendChild(empty);
+    return;
+  }
+
+  const table = document.createElement("table");
+  const header = document.createElement("thead");
+  const headerRow = document.createElement("tr");
+  for (const label of ["#", "PLAYER", "SCORE", "LVL", "LINES"]) {
+    const cell = document.createElement("th");
+    cell.scope = "col";
+    cell.textContent = label;
+    headerRow.appendChild(cell);
+  }
+  header.appendChild(headerRow);
+  table.appendChild(header);
+
+  const body = document.createElement("tbody");
+  entries.forEach((entry, index) => {
+    const row = document.createElement("tr");
+    const values = [
+      `${index + 1}`,
+      entry.nickname,
+      formatNumber(entry.score),
+      `${entry.level}`,
+      `${entry.lines}`,
+    ];
+    values.forEach((value, valueIndex) => {
+      const cell = document.createElement("td");
+      cell.textContent = value;
+      if (valueIndex === 1) cell.className = "leaderboard-name";
+      row.appendChild(cell);
+    });
+    body.appendChild(row);
+  });
+  table.appendChild(body);
+  container.appendChild(table);
 }
 
 function keyLabel(code: string): string {

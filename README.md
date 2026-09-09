@@ -6,8 +6,9 @@ Linux without any external browser, plays fully offline once installed, and
 ships with a procedurally synthesised sound-effect bank and a looped chiptune
 soundtrack.
 
-![Tetrix screenshot placeholder — the application shows a 10x20 board, ghost
-piece, next-piece preview, score sidebar, and a retro arcade palette.]
+The rules and runtime boundaries are documented in
+[`docs/architecture.md`](docs/architecture.md). Contributor and release
+guidance is available in [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
 ## Features
 
@@ -20,6 +21,8 @@ piece, next-piece preview, score sidebar, and a retro arcade palette.]
   for precise horizontal control.
 - **Line clear** scoring with classic multipliers, persistent high score, level
   progression (+1 every 10 lines), and progressive gravity.
+- **Local top-ten leaderboard** with a saved nickname and score, level, lines,
+  and date for each completed game.
 - **Game states** (`MENU`, `PLAYING`, `PAUSED`, `GAME_OVER`) explicitly enforced.
 - Procedural **sound effects** generated via the Web Audio API and a **CC0
   chiptune soundtrack** bundled inside the application binary.
@@ -32,29 +35,29 @@ piece, next-piece preview, score sidebar, and a retro arcade palette.]
 
 ## Controls
 
-| Action | Key |
-| --- | --- |
-| Move left | `←` |
-| Move right | `→` |
-| Soft drop | `↓` |
-| Rotate clockwise | `↑` |
-| Rotate counter-clockwise | `Z` |
-| Hard drop | `Space` |
-| Pause / resume | `Esc` or `P` |
-| Restart | `R` |
+| Action                   | Key          |
+| ------------------------ | ------------ |
+| Move left                | `←`          |
+| Move right               | `→`          |
+| Soft drop                | `↓`          |
+| Rotate clockwise         | `↑`          |
+| Rotate counter-clockwise | `Z`          |
+| Hard drop                | `Space`      |
+| Pause / resume           | `Esc` or `P` |
+| Restart                  | `R`          |
 
-Hold-to-move uses a 133 ms DAS delay and a 33 ms ARR repeat rate, with soft
-drop repeating every 50 ms. These match the responsiveness expected from
-classic arcade-era block games.
+Hold-to-move uses a 170 ms DAS delay and a 55 ms ARR repeat rate, with soft
+drop repeating every 50 ms. Horizontal movement stays immediate on a tap while
+held movement gives more time to correct the position.
 
 ## Scoring
 
 | Lines cleared | Base points |
-| --- | --- |
-| 1 | 100 × level |
-| 2 | 300 × level |
-| 3 | 500 × level |
-| 4 (Tetris) | 800 × level |
+| ------------- | ----------- |
+| 1             | 100 × level |
+| 2             | 300 × level |
+| 3             | 500 × level |
+| 4 (Tetris)    | 800 × level |
 
 Soft drop awards 1 point per cell, hard drop awards 2 points per cell.
 Every 10 lines bumps the level by 1 (up to level 20), and the gravity
@@ -63,21 +66,21 @@ minimum of 50 ms per row.
 
 ## Technology
 
-| Layer | Stack |
-| --- | --- |
+| Layer          | Stack                                                         |
+| -------------- | ------------------------------------------------------------- |
 | Window / shell | Tauri 2 (WebKit / WebView2 / WebKitGTK depending on platform) |
-| Native code | Rust (Tauri runtime + tauri-plugin-store) |
-| UI / game | Vanilla TypeScript + Vite (no frontend framework) |
-| Rendering | HTML5 Canvas 2D |
-| Audio | Web Audio API (SFX) + HTMLAudioElement (music) |
-| Persistence | localStorage via the WebView |
-| Tests | Vitest + jsdom |
-| Linting | ESLint 9 + typescript-eslint |
-| Formatting | Prettier |
+| Native code    | Rust (Tauri runtime)                                          |
+| UI / game      | Vanilla TypeScript + Vite (no frontend framework)             |
+| Rendering      | HTML5 Canvas 2D                                               |
+| Audio          | Web Audio API (SFX) + HTMLAudioElement (music)                |
+| Persistence    | Validated localStorage adapter via the WebView                |
+| Tests          | Vitest + jsdom                                                |
+| Linting        | ESLint 9 + typescript-eslint                                  |
+| Formatting     | Prettier                                                      |
 
-The deliberate choice of vanilla TypeScript keeps the bundle small (~27 KB JS
-gzipped to ~9 KB) and the dependency surface tiny. The Rust binary is
-~5-6 MB per platform after release optimisation.
+The deliberate choice of vanilla TypeScript keeps the dependency surface tiny
+and the frontend bundle small. The production build reports its current bundle
+size during `npm run build`; native installer sizes vary by operating system.
 
 ## Project structure
 
@@ -93,15 +96,19 @@ gzipped to ~9 KB) and the dependency surface tiny. The Rust binary is
 │   ├── game/                  # Pure game logic (DOM-free)
 │   │   ├── bag.ts             # 7-bag randomizer
 │   │   ├── board.ts           # Collisions, ghost, line clears
-│   │   ├── input.ts           # Keyboard, DAS/ARR
 │   │   ├── loop.ts            # Fixed-step rAF loop
 │   │   ├── pieces.ts          # Tetromino shapes + SRS kicks
 │   │   ├── scoring.ts         # Levels, gravity, points
 │   │   ├── tetris.ts          # High-level game class
 │   │   └── types.ts           # Shared type definitions
+│   ├── input/                 # Keyboard input adapter
+│   │   └── input-manager.ts   # Keyboard, DAS/ARR
 │   ├── render/                # Canvas renderer
-│   ├── storage/               # Persistence (localStorage)
-│   └── ui/                    # Screen / overlay controller
+│   ├── storage/               # Validated local persistence
+│   │   ├── leaderboard.ts
+│   │   ├── local-storage.ts
+│   │   └── persistence.ts
+│   └── ui/                    # Screens, overlays, and responsive layout
 ├── src-tauri/                 # Tauri (Rust) shell
 │   ├── src/                   # main.rs / lib.rs
 │   ├── Cargo.toml
@@ -109,7 +116,11 @@ gzipped to ~9 KB) and the dependency surface tiny. The Rust binary is
 │   ├── capabilities/          # Permission manifests
 │   └── icons/                 # App icons (PNG / ICO / ICNS)
 ├── tests/                     # Vitest unit tests
+│   ├── input.test.ts
+│   ├── leaderboard.test.ts
+│   ├── persistence.test.ts
 │   └── tetris.test.ts
+├── docs/                      # Architecture and development notes
 ├── scripts/                   # Utility scripts (icon generation)
 ├── package.json
 ├── tsconfig.json
@@ -137,8 +148,8 @@ gzipped to ~9 KB) and the dependency surface tiny. The Rust binary is
 npm install
 ```
 
-This installs both the JavaScript and Rust dependencies (the latter through
-the Tauri CLI).
+This installs the JavaScript dependencies. Rust dependencies are resolved by
+Cargo when you run a Tauri development or build command.
 
 ## Development
 
@@ -168,11 +179,11 @@ This runs the production Vite build, compiles the Rust binary in release
 mode, and produces platform-native installers and binaries inside
 `src-tauri/target/release/bundle/`:
 
-| Platform | Output |
-| --- | --- |
-| Windows | `.msi` and `.exe` (NSIS) installers |
-| macOS | `.app` bundle and `.dmg` |
-| Linux | `.deb`, `.rpm`, and `.AppImage` |
+| Platform | Output                              |
+| -------- | ----------------------------------- |
+| Windows  | `.msi` and `.exe` (NSIS) installers |
+| macOS    | `.app` bundle and `.dmg`            |
+| Linux    | `.deb`, `.rpm`, and `.AppImage`     |
 
 For a quicker Rust-only verification build, run:
 
@@ -187,15 +198,17 @@ npm test            # single run
 npm run test:watch  # watch mode
 ```
 
-The unit tests cover collisions (walls, floor, piece-on-piece), line clears,
-rotation including SRS wall kicks, the 7-bag randomizer, scoring math, level
-progression, the pause / resume state machine, and game-over detection.
+The unit tests cover collisions (walls, floor, piece-on-piece), hard and soft
+drop behavior, line clears, rotation including SRS wall kicks, the 7-bag
+randomizer, scoring math, level progression, local leaderboard persistence,
+the pause / resume state machine, and game-over detection.
 
 ## Lint, format, type-check
 
 ```sh
 npm run lint        # ESLint
 npm run format      # Prettier (write)
+npm run format:check # Prettier validation
 npm run typecheck   # tsc --noEmit
 ```
 
@@ -208,6 +221,13 @@ for full attribution and license details.
 Sound effects (move, rotate, soft drop, hard drop, line clear, Tetris, menu
 click, game over) are synthesised at runtime via the Web Audio API and require
 no external assets.
+
+## Releases
+
+Every tag matching `v*` starts the GitHub Actions release workflow. It builds
+unsigned Tauri bundles for Ubuntu, Windows, and macOS and attaches them to a
+GitHub release. Signing and notarization can be added later with repository
+secrets; see [`docs/development.md`](docs/development.md).
 
 ## License
 

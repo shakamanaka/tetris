@@ -15,7 +15,7 @@
   --danger: #ff4f6a;
   --good: #65ff9b;
   --grid: rgba(255, 255, 255, 0.05);
-  --font: "Press Start 2P", "Courier New", monospace;
+  --font: "Courier New", monospace;
 }
 
 * {
@@ -437,6 +437,124 @@ input[type="range"] {
   letter-spacing: 1px;
   color: var(--accent-3);
   text-shadow: 0 0 6px rgba(255, 210, 74, 0.4);
+}
+
+.score-entry {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-align: left;
+}
+
+.nickname-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: var(--text-dim);
+  font-size: 9px;
+  letter-spacing: 1.5px;
+}
+
+.nickname-field input {
+  width: 100%;
+  background: var(--bg-deep);
+  border: 2px solid var(--panel-edge);
+  border-radius: 5px;
+  color: var(--text);
+  font: inherit;
+  font-size: 11px;
+  letter-spacing: 1px;
+  outline: none;
+  padding: 9px 10px;
+  text-transform: uppercase;
+}
+
+.nickname-field input:focus {
+  border-color: var(--accent-2);
+  box-shadow: 0 0 8px rgba(0, 240, 240, 0.25);
+}
+
+.score-entry .btn {
+  width: 100%;
+}
+
+.score-save-status {
+  min-height: 10px;
+  color: var(--good);
+  font-size: 8px;
+  letter-spacing: 1px;
+  text-align: center;
+}
+
+.btn:disabled {
+  cursor: default;
+  opacity: 0.55;
+}
+
+.leaderboard-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-align: left;
+}
+
+.leaderboard-section h2 {
+  color: var(--accent);
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-shadow: 0 0 6px rgba(255, 119, 255, 0.4);
+}
+
+.leaderboard {
+  overflow: hidden;
+  border: 1px solid var(--panel-edge);
+  border-radius: 5px;
+  background: rgba(6, 5, 13, 0.45);
+}
+
+.leaderboard table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 8px;
+  letter-spacing: 0.5px;
+}
+
+.leaderboard th,
+.leaderboard td {
+  padding: 6px 5px;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.leaderboard th {
+  color: var(--text-dim);
+  font-size: 7px;
+  letter-spacing: 1px;
+}
+
+.leaderboard td {
+  color: var(--text);
+  border-top: 1px solid rgba(59, 47, 107, 0.45);
+}
+
+.leaderboard tr:first-child td {
+  color: var(--accent-3);
+}
+
+.leaderboard .leaderboard-name {
+  max-width: 100px;
+  overflow: hidden;
+  color: var(--accent-2);
+  text-align: left;
+  text-overflow: ellipsis;
+}
+
+.leaderboard-empty {
+  padding: 10px 8px;
+  color: var(--text-dim);
+  font-size: 8px;
+  letter-spacing: 1px;
+  text-align: center;
 }
 
 /* Responsive adjustments */

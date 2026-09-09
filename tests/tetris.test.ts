@@ -33,18 +33,25 @@ describe("TetrisGame - collisions with walls and floor", () => {
 
   it("stops the piece at the floor (collides with the bottom wall)", () => {
     const game = freshGame();
-    let attempts = 0;
-    while (game.snapshot().piece?.type !== "O" && attempts++ < 50) {
-      if (game.getState() === "MENU") game.start();
-      else game.hardDrop();
-    }
+    while (game.snapshot().piece?.type !== "O") game.start();
     expect(game.snapshot().piece?.type).toBe("O");
     game.hardDrop();
-    // After hard drop the piece locks and the next piece spawns; we expect a
-    // different (non-O) piece type or null.
+    // After hard drop the piece locks and the next piece spawns.
     const next = game.snapshot().piece;
-    expect(next === null || next.type !== "O").toBe(true);
+    expect(next).not.toBeNull();
     expect(game.snapshot().state).toBe("PLAYING");
+  });
+
+  it("merges a hard-dropped piece only once", () => {
+    const game = freshGame();
+    game.start();
+    game.hardDrop();
+
+    const occupied = game
+      .snapshot()
+      .stack.flat()
+      .filter((cell) => cell !== null).length;
+    expect(occupied).toBe(4);
   });
 
   it("detects wall collisions directly via board.collides", () => {

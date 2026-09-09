@@ -214,7 +214,7 @@ function drawOverlayText(
   ctx.fillStyle = "rgba(11, 10, 20, 0.7)";
   ctx.fillRect(x, y, width, height);
   const fontSize = Math.max(12, Math.min(32, Math.floor(width / 9)));
-  ctx.font = `bold ${fontSize}px 'Press Start 2P', 'Courier New', monospace`;
+  ctx.font = `bold ${fontSize}px 'Courier New', monospace`;
   ctx.fillStyle = palette.accent;
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";

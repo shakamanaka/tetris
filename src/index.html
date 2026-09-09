@@ -4,16 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Tetrix</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
-      rel="stylesheet"
-      onerror="
-        this.onerror = null;
-        this.parentNode.removeChild(this);
-      "
-    />
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
@@ -46,6 +36,10 @@
             <button id="btn-settings" class="btn">SETTINGS</button>
             <button id="btn-quit" class="btn">QUIT</button>
           </div>
+          <section class="leaderboard-section">
+            <h2>LEADERBOARD</h2>
+            <div class="leaderboard" id="menu-leaderboard" aria-live="polite"></div>
+          </section>
         </div>
       </div>
 
@@ -90,6 +84,25 @@
             <div><span>LEVEL</span><strong id="final-level">1</strong></div>
             <div><span>LINES</span><strong id="final-lines">0</strong></div>
           </div>
+          <div class="score-entry">
+            <label class="nickname-field" for="nickname-input">
+              <span>NICKNAME</span>
+              <input
+                id="nickname-input"
+                type="text"
+                maxlength="12"
+                autocomplete="nickname"
+                spellcheck="false"
+                value="PLAYER"
+              />
+            </label>
+            <button id="btn-save-score" class="btn">SAVE SCORE</button>
+            <p class="score-save-status" id="score-save-status" aria-live="polite"></p>
+          </div>
+          <section class="leaderboard-section">
+            <h2>LEADERBOARD</h2>
+            <div class="leaderboard" id="gameover-leaderboard" aria-live="polite"></div>
+          </section>
           <div class="menu-buttons">
             <button id="btn-play-again" class="btn primary">PLAY AGAIN</button>
             <button id="btn-main-menu" class="btn">MAIN MENU</button>
